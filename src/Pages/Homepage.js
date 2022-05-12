@@ -4,26 +4,23 @@ import agi from "../img/Icon_Agi.png";
 import int from "../img/Icon_Int.png";
 import malee from "../img/malee-icon.png";
 import bow from "../img/bow-icon.png";
-import Herodetail from "./Herodetail";
-
+import Cookies from "universal-cookie";
 import axios from "axios";
+const cookies = new Cookies();
 
 function Homepage() {
   const [dataherose, setDataherose] = useState([]);
-  const [search, setSearch] = useState("");
-  const [attribute, setAttribute] = useState("");
-  const [attacktype, setAttacktype] = useState("");
+  const [dataherosefilter, setDataherosefilter] = useState([]);
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
   const [datastate, setDatastate] = useState();
+  const [checked, setChecked] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = (row) => {
     setShow(true);
     setDatastate(row);
   };
-  const [buttonfav, setButtonfav] = useState(true);
-
   const apiopendota = "https://api.opendota.com";
 
   const fetchData = async () => {
@@ -37,45 +34,53 @@ function Homepage() {
 
       setDataherose(datasort);
       setLoading(false);
-      // console.log(datasort.sort((a, b) => a.localized_name > b.localized_name));
     } catch (error) {
       console.log(error);
     }
   };
   useEffect(() => {
     fetchData();
-    setAttacktype()
   }, []);
-  const SearchHero = () => {
-    return dataherose.filter((hero) => {
-      if (attacktype) {
-        console.log(attribute);
-        setAttribute('')
-        return hero.attack_type.toLowerCase().includes(attacktype);
-      } else if (search.length > 0) {
-        return (
-          hero.localized_name.toLowerCase().includes(search) ||
-          hero.localized_name.toUpperCase().includes(search)
-        );
-      } else if (attribute) {
-        console.log(attacktype);
-        return hero.primary_attr.toLowerCase().includes(attribute);
-      } else {
-        return hero;
-      }
-    });
-  };
-  // console.log(());
-  const resetstate = () => {
-    setAttribute('')
-    setAttacktype('')
+
+  const filtersearchHero = (search) => {
+    setDataherosefilter(
+      dataherose.filter(
+        (hero) =>
+          hero?.localized_name.toLowerCase().includes(search) ||
+          hero?.localized_name.toUpperCase().includes(search)
+      )
+    );
   };
 
-  const FilterAttacktype = () => {
-    if (attacktype) {
-      setAttribute("");
+  const filterattrHero = (attribute) => {
+    setChecked(!checked);
+    if (!checked) {
+      setDataherosefilter(
+        dataherose.filter((hero) =>
+          hero?.primary_attr.toLowerCase().includes(attribute)
+        )
+      );
+    } else {
+      setDataherosefilter(dataherose);
     }
   };
+  const filterattackHero = (attacktype) => {
+    setChecked(!checked);
+    if (!checked) {
+      setDataherosefilter(
+        dataherose.filter((hero) =>
+          hero?.attack_type.toLowerCase().includes(attacktype)
+        )
+      );
+    } else {
+      setDataherosefilter(dataherose);
+    }
+  };
+
+  useEffect(() => {
+    setDataherosefilter(dataherose);
+  }, [dataherose]);
+
   const calculatorAttack = () => {
     if (datastate.primary_attr === "int") {
       return (
@@ -108,6 +113,19 @@ function Homepage() {
       return <></>;
     }
   };
+  const [favorites, setFavorites] = useState([]);
+
+  const addFavHero = (fav) => {
+    const Favlist = [...favorites, fav];
+    setFavorites(Favlist);
+  };
+
+  const removeFavHero = (fav) => {
+    const Removeist = favorites.filter((favorites) => favorites.id !== fav);
+    setFavorites(Removeist);
+    console.log(dataherose.id);
+  };
+  cookies.set("favHero", favorites, { path: "/" });
 
   return (
     <>
@@ -129,50 +147,56 @@ function Homepage() {
         <div className="flex space-x-0.5 item-center">
           <p className="mr-3 mt-1.5">ATTRIBUTE</p>
           <img
-            className="item-center flex grayscale hover:grayscale-0	 cursor-pointer 	"
+            className={`item-center flex grayscale hover:grayscale-0	 cursor-pointer  ${
+              checked != "str" ? "grayscale" : "grayscale-0	"
+            }`}
             src={str}
             alt="str"
-            label="str"
-            checked={attribute === "str"}
             value="str"
-            onClick={() => setAttribute("str")}
+            onClick={() => {
+              filterattrHero("str");
+            }}
           ></img>
           <img
-            className="item-center flex grayscale  hover:grayscale-0	 cursor-pointer "
+            className="item-center flex grayscale hover:grayscale-0	 cursor-pointer"
             src={agi}
             alt="agi"
             value="agi"
-            label="agi"
-            checked={attribute === "agi"}
-            onClick={() => setAttribute("agi")}
+            onClick={() => {
+              filterattrHero("agi");
+            }}
           ></img>
           <img
-            className="item-center flex grayscale  hover:grayscale-0 cursor-pointer "
+            className="item-center flex grayscale hover:grayscale-0	 cursor-pointer "
             src={int}
             alt="int"
             value="int"
-            label="int"
-            checked={attribute === "int"}
-            onClick={() => setAttribute("int")}
+            onClick={() => {
+              filterattrHero("int");
+            }}
           ></img>
         </div>
         <div className="flex space-x-0.5 item-center gap-x-2 ">
           <span className="mr-3 mt-1.5">ATTACK TYPE</span>
           <img
-            className="item-center flex grayscale  hover:grayscale-0 cursor-pointer	"
+            className={`item-center flex grayscale hover:grayscale-0	 cursor-pointer  ${
+              !checked ? "grayscale" : "grayscale-0	"
+            }`}
             src={malee}
             alt="malee"
             width={"40px"}
             height={"40px"}
-            onClick={() => setAttacktype("melee")}
+            onClick={() => filterattackHero("melee")}
           ></img>
           <img
-            className="item-center flex grayscale  hover:grayscale-0 cursor-pointer"
+            className={`item-center flex grayscale hover:grayscale-0	 cursor-pointer  ${
+              !checked ? "grayscale" : "grayscale-0	"
+            }`}
             src={bow}
             alt="bow"
             width={"40px"}
             height={"40px"}
-            onClick={() => setAttacktype("ranged")}
+            onClick={() => filterattackHero("ranged")}
           ></img>
         </div>
         <div className="flex justify-center items-center  bg-[#25282a] w-[250px] h-[50px]">
@@ -182,8 +206,8 @@ function Homepage() {
               className="placeholder:italic placeholder:text-base w-[190px] h-[30px] bg-[#25282a] p-1 focus:bg-[#606d75] focus:outline-none"
               type="text"
               name="search"
-              onChange={(e) => setSearch(e.target.value)}
-              value={search}
+              onChange={(e) => filtersearchHero(e.target.value)}
+              // value={search}
             />
           </label>
         </div>
@@ -194,7 +218,7 @@ function Homepage() {
         </div>
       ) : (
         <div className="container  items-center flex  flex-wrap justify-start gap-x-4 gap-y-4	 py-2  w-[1200px] h-auto font-font-icon text-white   ">
-          {SearchHero().map((val, id) => {
+          {dataherosefilter.map((val, id) => {
             return (
               <div key={id}>
                 <div className=" relative inline-block transition  ease-out hover:cursor-pointer z-40  transform  hover:scale-125  ease-in z-40 	 ">
@@ -382,35 +406,31 @@ function Homepage() {
                 </div>
               </div>
               {/* <!-- Modal footer --> */}
-              {buttonfav ? (
-                <div className="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200">
-                  <button
-                    onClick={() => setButtonfav(false)}
-                    data-modal-toggle="defaultModal"
-                    type="button"
-                    className="text-white bg-[#25282a] hover:bg-[#3A3C3E]  focus:outline-none  font-medium rounded-lg text-sm px-5 py-2.5 text-center "
-                  >
-                    ADD TO FAVORITE
-                  </button>
-                </div>
-              ) : (
-                <div className="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 ">
-                  <button
-                    onClick={() => setButtonfav(true)}
-                    data-modal-toggle="defaultModal"
-                    type="button"
-                    className="text-white bg-[#25282a] hover:bg-[#3A3C3E]  focus:outline-none  font-medium rounded-lg text-sm px-5 py-2.5 text-center "
-                  >
-                    REMOVE FROM FAVORITES
-                  </button>
-                </div>
-              )}
+              {/* {buttonfav ? ( */}
+              <div className="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200">
+                <button
+                  movie={datastate}
+                  onClick={() => addFavHero(datastate)}
+                  data-modal-toggle="defaultModal"
+                  type="button"
+                  className="text-white bg-[#25282a] hover:bg-[#3A3C3E]  focus:outline-none  font-medium rounded-lg text-sm px-5 py-2.5 text-center "
+                >
+                  ADD TO FAVORITE
+                </button>
+                <button
+                  onClick={() => removeFavHero(datastate.id)}
+                  data-modal-toggle="defaultModal"
+                  type="button"
+                  className="text-white bg-[#25282a] hover:bg-[#3A3C3E]  focus:outline-none  font-medium rounded-lg text-sm px-5 py-2.5 text-center "
+                >
+                  REMOVE FROM FAVORITES
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
-
-      {/* <Herodetail show={show} onHide={handleClose} /> */}
+      {/* <Favheroes remove={removeFavHero} /> */}
     </>
   );
 }

@@ -13,13 +13,13 @@ function Navbar() {
         </div>
         <Link
           to="/"
-          className="font-font-icon text-3xl  tracking-tight ml-10 sm:text-2xl  md:text-3xl  hover:bg-gray-200 "
+          className="font-font-icon text-3xl  tracking-tight ml-10 sm:text-2xl  md:text-3xl"
         >
           HEROES
         </Link>
         <Link
           to="/favoriteheroes"
-          className="font-font-icon text-3xl tracking-tight ml-10 sm:text-2xl  md:text-3xl  hover:bg-gray-200 "
+          className="font-font-icon text-3xl tracking-tight ml-10 sm:text-2xl  md:text-3xl"
         >
           FAVORITE HEROES
         </Link>
