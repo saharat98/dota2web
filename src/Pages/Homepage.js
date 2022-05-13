@@ -249,9 +249,7 @@ function Homepage() {
           className=" fixed translate-y-[6rem]	translate-x-[30rem] w-[500px] z-50 "
         >
           <div className="relative p-4   w-full max-w-2xl h-full">
-            {/* <!-- Modal content --> */}
             <div className="relative bg-gradient-to-t from-[#15191a] to-[#1f2223]  rounded-lg shadow  ">
-              {/* <!-- Modal header --> */}
               <div className="flex justify-between items-center p-4 rounded-t border-b">
                 <h3 className="text-xl font-semibold text-white">
                   HERO DETAIL
@@ -276,7 +274,6 @@ function Homepage() {
                   </svg>
                 </button>
               </div>
-              {/* <!-- Modal body --> */}
 
               <div
                 className="p-2 flex
@@ -405,8 +402,6 @@ function Homepage() {
                   </div>
                 </div>
               </div>
-              {/* <!-- Modal footer --> */}
-              {/* {buttonfav ? ( */}
               <div className="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200">
                 <button
                   movie={datastate}
@@ -430,7 +425,6 @@ function Homepage() {
           </div>
         </div>
       )}
-      {/* <Favheroes remove={removeFavHero} /> */}
     </>
   );
 }
